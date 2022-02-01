@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      lang="ru">
+
+<f:metadata>
+    <!-- Установка URL -->
+    <f:event type="preRenderView" listener="#{controller.onControl}" />
+</f:metadata>
+
+<h:head>
+    <ui:insert name="head"/>
+    <h:outputStylesheet library="css" name="style.css"/>
+</h:head>
+
+<h:body>
+    <!-- Меню -->
+    <h:form>
+        <p:growl id="messages" showDetail="true" closable="true" escape="false">
+            <p:autoUpdate/>
+        </p:growl>
+
+        <p:menubar>
+
+            <p:submenu label="Об авторе" icon="pi pi-fw pi-user">
+                <p:menuitem value="Github" icon="pi pi-fw pi-user-plus" target="_blank"  url="https://github.com/vladhacksmile"/>
+                <p:menuitem value="Информация" icon="pi pi-fw pi-user-minus" onclick="PF('author').show()"/>
+            </p:submenu>
+
+            <p:divider layout="vertical"/>
+
+            <ui:insert name="menuitems"/>
+
+            <f:facet name="options">
+                <p:button value="На главную" icon="pi pi-fw pi-sign-out" styleClass="ui-button-info" outcome="index" rendered="#{controller.url eq '/main.xhtml'}"/>
+                <p:button value="Открыть таблицу" icon="pi pi-fw pi-sign-out" styleClass="ui-button-info" outcome="main" rendered="#{controller.url eq '/index.xhtml'}"/>
+            </f:facet>
+        </p:menubar>
+
+        <!-- Информация об авторе -->
+        <p:dialog header="Информация об авторе" widgetVar="about" minHeight="40" width="500" showEffect="fade" modal="true">
+            <p class="p-m-0">Работу выполнил: Харин Владислав Сергеевич</p>
+            <p class="p-m-0">Студент группы: P3215</p>
+            <p class="p-m-0">Вариант: 62901</p>
+        </p:dialog>
+
+        <p:sidebar widgetVar="author" position="left">
+            <h3>Работу выполнил: Харин Владислав Сергеевич</h3>
+            <h3>Студент группы: P3215</h3>
+            <h3>Вариант: 62901</h3>
+        </p:sidebar>
+    </h:form>
+
+    <!-- Блок контента -->
+    <ui:insert name="content"/>
+
+    <!-- Footer -->
+    <div class="card">
+        <p:dataTable var="footer" value="1">
+            <f:facet name="footer">
+                <span class="p-text-bold">© 2021 Санкт-Петербург, Университет ИТМО</span>
+            </f:facet>
+        </p:dataTable>
+    </div>
+</h:body>
+</html>

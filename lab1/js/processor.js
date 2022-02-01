@@ -99,4 +99,14 @@
 
      		document.getElementById("debugButton").onclick = function () {
      			sendPost('debug.php');
+     			document.getElementById("result").innerHTML = "<table><thead><tr><td>Время запроса</td><td>Время выполнения</td><td>X</td><td>Y</td><td>R</td><td>Результат</td></tr></thead></table>";
      		};
+
+
+			function ready() {
+				sendPost('check.php', formatRequest(0, 0, 0)).then(function (data) {
+            			document.getElementById("result").innerHTML = data;
+        			}).catch(error => alert("Произошла ошибка. " + error));
+			}
+
+     		document.addEventListener("DOMContentLoaded", ready);

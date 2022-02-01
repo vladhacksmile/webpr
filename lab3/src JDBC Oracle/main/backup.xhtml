@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+    <title>Lab 3 - график</title>
+    <h:outputStylesheet library="css" name="style.css"/>
+</h:head>
+
+<h:body>
+    <!-- Меню -->
+        <h:form enctype="multipart/form-data;charset=UTF-8">
+            <p:growl id="messages" showDetail="true" closable="true" escape="false">
+                <p:autoUpdate/>
+            </p:growl>
+
+            <p:menubar>
+
+                <p:submenu label="Об авторе" icon="pi pi-fw pi-user">
+                    <p:menuitem value="Github" icon="pi pi-fw pi-user-plus" target="_blank"  url="https://github.com/vladhacksmile"/>
+                    <p:menuitem value="Информация" icon="pi pi-fw pi-user-minus" onclick="PF('about').show()"/>
+                </p:submenu>
+
+                <p:divider layout="vertical"/>
+
+                <p:menuitem value="Очистить таблицу" icon="pi pi-fw pi-power-off" action="#{table.clear}" update="result"/>
+
+                <f:facet name="options">
+                    <p:button value="На главную" icon="pi pi-fw pi-sign-out" styleClass="ui-button-info" outcome="index"/>
+                </f:facet>
+            </p:menubar>
+
+    <!-- Информация об авторе -->
+    <p:dialog header="Информация об авторе" widgetVar="about" minHeight="40" width="500" showEffect="fade" modal="true">
+        <p class="p-m-0">Работу выполнил: Харин Владислав Сергеевич</p>
+        <p class="p-m-0">Студент группы: P3215</p>
+        <p class="p-m-0">Вариант: 62901</p>
+    </p:dialog>
+
+    <!-- Блок контента -->
+    <div style="margin: 1% auto; text-align: center;">
+
+        <!-- Canvas -->
+        <canvas id="graphCanvas" width="260" height="260" style="border:1px solid #000000; margin-top: 5px;">
+            Ваш браузер не поддерживает технологию Canvas
+        </canvas>
+
+        <!-- Координата X -->
+        <h3 class="p-mt-0">Выберите координату X</h3>
+        <div style="margin-bottom: 10px;">
+            <div class="card">
+                    <p:selectOneRadio id="coordinateX" value="#{table.coordinateX}" unselectable="true" style="margin: 1% auto; text-align: center;" onchange="setX(value)">
+                        <f:selectItem itemLabel="-4" itemValue="-4"/>
+                        <f:selectItem itemLabel="-3" itemValue="-3"/>
+                        <f:selectItem itemLabel="-2" itemValue="-2"/>
+                        <f:selectItem itemLabel="-1" itemValue="-1"/>
+                        <f:selectItem itemLabel="0" itemValue="0"/>
+                        <f:selectItem itemLabel="1" itemValue="1"/>
+                        <f:selectItem itemLabel="2" itemValue="2"/>
+                        <f:selectItem itemLabel="3" itemValue="3"/>
+                        <f:selectItem itemLabel="4" itemValue="4"/>
+                        <p:ajax render="coordinateX"/>
+                    </p:selectOneRadio>
+            </div>
+        </div>
+
+        <!-- Координата Y -->
+        <h3 class="p-mt-0">Введите координату Y</h3>
+        <div style="margin-bottom: 10px;">
+                <p:inputText id="coordinateY" placeholder="(-3 ... 5)" value="#{table.coordinateY}">
+                <p:ajax render="coordinateY"/>
+            </p:inputText>
+        </div>
+
+        <!-- Радиус R -->
+        <h3 class="p-mt-0">Выберите радиус R</h3>
+        <div style="margin-bottom: 10px;">
+            <p:commandButton value="1" styleClass="ui-button-outlined" name="radius" onclick="setR(1, this)" actionListener="#{table.setRadius(1)}"/>
+            <p:commandButton value="2" styleClass="ui-button-outlined ui-button-secondary" name="radius" onclick="setR(2, this)" actionListener="#{table.setRadius(2)}"/>
+            <p:commandButton value="3" styleClass="ui-button-outlined ui-button-success" name="radius" onclick="setR(3, this)" actionListener="#{table.setRadius(3)}"/>
+            <p:commandButton value="4" styleClass="ui-button-outlined ui-button-info" name="radius" onclick="setR(4, this)" actionListener="#{table.setRadius(4)}"/>
+            <p:commandButton value="5" styleClass="ui-button-outlined ui-button-warning" name="radius" onclick="setR(5, this)" actionListener="#{table.setRadius(5)}"/>
+        </div>
+
+        <!-- Кнопка отправки запроса -->
+        <div>
+            <p:commandButton value="Проверить" styleClass="ui-button-raised" onclick="return executeButton()" action="#{table.check}" update="result"/>
+        </div>
+
+    </div>
+
+    <!-- Таблица с результатами -->
+        <div class="card">
+            <p:dataTable id="result" var="userRequest" value="#{table.userRequests}">
+                <p:column headerText="Время запроса">
+                    <h:outputText value="#{userRequest.date}" />
+                </p:column>
+
+                <p:column headerText="Время выполнения">
+                    <h:outputText value="#{userRequest.executionTime}" />
+                </p:column>
+
+                <p:column headerText="X">
+                    <h:outputText value="#{userRequest.x}" />
+                </p:column>
+
+                <p:column headerText="Y">
+                    <h:outputText value="#{userRequest.y}" />
+                </p:column>
+
+                <p:column headerText="R">
+                    <h:outputText value="#{userRequest.r}" />
+                </p:column>
+
+                <p:column headerText="Результат">
+                    <h:outputText value="#{(userRequest.belong ? 'Попадение' : 'Нет попадания')}" style="color: #{(userRequest.belong ? 'green' : 'red')};"/>
+                </p:column>
+            </p:dataTable>
+        </div>
+    </h:form>
+
+    <!-- Footer -->
+    <div class="card">
+            <p:dataTable var="footer" value="1">
+                <f:facet name="footer">
+                    <span class="p-text-bold">© 2021 Санкт-Петербург, Университет ИТМО</span>
+                </f:facet>
+            </p:dataTable>
+    </div>
+
+    <!-- Подключаемые скрипты -->
+    <h:outputScript library="js" name="canvas.js"/>
+    <h:outputScript library="js" name="processor.js"/>
+</h:body>
+</html>
